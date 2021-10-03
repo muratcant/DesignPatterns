@@ -12,6 +12,7 @@ namespace Singleton
         {
             count++;
             name = "Singleton"+count;
+            PrintName();
         }
 
         public static SingletonObject GetInstance()
