@@ -15,9 +15,13 @@ namespace Singleton
             AfterLoadSingleton();
             Console.WriteLine($"After Load Singleton->{sw.Elapsed}");
             NonThreadSafeSingleton();
-            Console.WriteLine($"Non-Thread Safe Singleton->{sw.Elapsed}");            
+            Console.WriteLine($"Non-Thread Safe Singleton->{sw.Elapsed}");
             ThreadSafeSingleton();
             Console.WriteLine($"Thread Safe Singleton->{sw.Elapsed}");
+            DoubleCheckedLockingSingleton();
+            Console.WriteLine($"Double Checked Locking Singleton->{sw.Elapsed}");
+            ThreadSafeLazySingleton();
+            Console.WriteLine($"Thread Safe Lazy Singleton->{sw.Elapsed}");
             Console.ReadLine();
         }
 
@@ -31,7 +35,6 @@ namespace Singleton
             }
             sw.Stop();
         }
-
         static void AfterLoadSingleton()
         {
             sw.Start();
@@ -52,10 +55,10 @@ namespace Singleton
             }
             sw.Stop();
         }
-
         static void ThreadSafeSingleton()
         {
             Program client = new Program();
+            sw.Restart();
             sw.Start();
             for (int i = 0; i < 200; i++)
             {
@@ -64,6 +67,31 @@ namespace Singleton
             }
             sw.Stop();
         }
+        static void ThreadSafeLazySingleton()
+        {
+            Program client = new Program();
+            sw.Restart();
+            sw.Start();
+            for (int i = 0; i < 200; i++)
+            {
+                Thread thread = new Thread(new ThreadStart(client.Run4));
+                thread.Start();
+            }
+            sw.Stop();
+        }
+        static void DoubleCheckedLockingSingleton()
+        {
+            Program client = new Program();
+            sw.Restart();
+            sw.Start();
+            for (int i = 0; i < 200; i++)
+            {
+                Thread thread = new Thread(new ThreadStart(client.Run3));
+                thread.Start();
+            }
+            sw.Stop();
+        }
+
 
         public void Run()
         {
@@ -75,6 +103,13 @@ namespace Singleton
             ThreadSafeSingletonObject.GetInstance();
         }
 
-
+        public void Run3()
+        {
+            DoubleCheckedLockingSingletonObject.GetInstance();
+        }
+        public void Run4()
+        {
+            ThreadSafeLazySingletonObject.GetInstance();
+        }
     }
 }
